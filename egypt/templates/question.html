@@ -1,0 +1,22 @@
+{% extends 'news.html' %}
+
+{% block go %}
+    <a href="{% url 'home' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> الصفحة الرئيسية</a>
+    <a href="{% url 'egy' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> أخبار الوزارة </a>
+    <a href="{% url 'advice' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> نصائح الوزارة </a>
+    <a href="{% url 'contact' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> تواصل مع الوزارة </a>
+{% endblock go %}
+
+{% block head %}
+    <h2 class="w3-text-grey w3-padding-16" style="text-align: center; direction: rtl"><i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i> أسئلة شائعة </h2>
+{% endblock head %}
+
+{% block advice %}
+<div class="w3-container w3-center">
+  <h5 style="direction: rtl">{{ item.content }}</h5>
+    {% if item.image %}
+    <img src="{{item.image.url}}" class="img-responsive" width="100%" height="60%">
+    {% endif %}
+  <hr>
+</div>
+{% endblock advice %}

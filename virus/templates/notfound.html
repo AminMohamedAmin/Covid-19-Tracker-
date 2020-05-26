@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body style="text-align: center">
+{% if locate %}
+<div style="padding: 20px; margin-top: 60px">
+    <h3>{{ locate }} is not a correct country</h3><br>
+    <h3>{{ text }}</h3><br>
+{#    {% if dd == True %}#}
+{#    <h4>Did You mean: {% for item in h %}<p style="color: darkred">{{ item }}</p>{% endfor %}</h4>#}
+{#    {% endif %}#}
+    <button style="text-align: center; border-radius: 10px; padding: 20px; margin: 20px"><a style="text-decoration: none; color: black; padding: 20px" href="{% url 'home' %}#menu">Return to try again</a></button>
+</div>
+{% endif %}
+
+{% if locatee %}
+<div style="padding: 20px; margin-top: 100px">
+    <h3>{{ locatee }} is not a correct country</h3><br>
+    <h2>{{ textt }}</h2>
+{#    {% if dd == True %}#}
+{#    <h4>Did You mean: {% for item in h %}<p style="color: darkred">{{ item }}</p>{% endfor %}</h4>#}
+{#    {% endif %}#}
+    <button style="text-align: center; border-radius: 10px; padding: 20px; margin: 20px"><a style="text-decoration: none; color: black; padding: 20px" href="{% url 'home' %}#menu">Return to try again</a></button>
+</div>
+{% endif %}
+</body>
+</html>

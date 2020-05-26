@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+{% load static %}
+{% load mathfilters %}
+<html>
+<title>Egypt</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+</style>
+<body>
+
+<!-- Sidebar with image -->
+<nav class="w3-sidebar w3-hide-medium w3-hide-small" style="width:40%">
+      <div style="direction: rtl">
+      <div class="w3-white w3-text-grey w3-card-4">
+        <div class="w3-display-container">
+          <img src="{% static 'img/b.jpg' %}" style="width:100%" alt="Avatar">
+        </div>
+        <div class="w3-container">
+          <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text-teal"></i> فايروس كورونا Covid-19 </p>
+          <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal"></i> مصر Egypt </p>
+          <hr>
+
+          <p class="w3-large" style="text-align: center"><b><i class="fa fa-asterisk fa-fw w3-margin-right w3-text-teal"></i> تتبع الحالات - Total Cases </b></p>
+          <p style="text-align: center">عدد حالات الإصابة : <span>{{ locationcases }}</span></p>
+            <p style="text-align: center">عدد الحالات المفعلة : <span>{{ locationactive }}</span></p>
+          <p style="text-align: center">عدد حالات الشفاء : <span>{{ locationrecoveries }}</span></p>
+          <p style="text-align: center">عدد حالات الوفاة : <span>{{ locationdeaths }}</span></p>
+          <br>
+
+          <p class="w3-large w3-text-theme" style="text-align: center"><b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal"></i> النسبة المؤية - Rates </b></p>
+          <p> معدل الشفاء </p>
+          <div class="w3-light-grey w3-round-xlarge w3-small">
+            <div class="w3-container w3-center w3-round-xlarge w3-green" style="width:{{locationrecoveries|div:locationcases|mul:100|floatformat:"2"}}%" ><span style="color: black">{{locationrecoveries|div:locationcases|mul:100|floatformat:"2"}}%</span></div>
+          </div>
+
+            <p> معدل الوفاة </p>
+          <div class="w3-light-grey w3-round-xlarge w3-small">
+            <div class="w3-container w3-center w3-round-xlarge w3-red" style="width:{{locationdeaths|div:locationcases|mul:100|floatformat:"2"}}%" ><span style="color: black">{{locationdeaths|div:locationcases|mul:100|floatformat:"2"}}%</span></div>
+          </div>
+          <br>
+        </div>
+      </div><br>
+    </div>
+</nav>
+<!-- Hidden Sidebar (reveals when clicked on menu icon)-->
+<nav class="w3-sidebar w3-black w3-animate-right w3-xxlarge" style="display:none;padding-top:150px;right:0;z-index:2" id="mySidebar">
+  <a href="javascript:void(0)" onclick="closeNav()" class="w3-button w3-black w3-xxxlarge w3-display-topright" style="padding:0 12px;">
+    <i class="fa fa-remove"></i>
+  </a>
+  <div class="w3-bar-block w3-center">
+      {% block go %}
+    <a href="{% url 'home' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> الصفحة الرئيسية</a>
+    <a href="{% url 'advice' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> نصائح الوزارة </a>
+    <a href="{% url 'question' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> أسئلة شائعة </a>
+    <a href="{% url 'contact' %}" class="w3-bar-item w3-button w3-text-grey w3-hover-black" onclick="closeNav()"> تواصل مع الوزارة </a>
+      {% endblock go %}
+  </div>
+</nav>
+<span class="w3-button w3-top w3-white w3-xxlarge w3-text-grey w3-hover-text-black" style="width:auto;right:0;" onclick="openNav()"><i class="fa fa-bars"></i></span><br><br><br>
+
+<!-- Page Content -->
+
+<div class="w3-main w3-padding-large" style="margin-left:40%">
+  <!-- Menu icon to open sidebar -->
+    <div class="w3-center" style="direction: rtl">
+      <div class="w3-container w3-card w3-white w3-margin-bottom">
+        {% block head %}
+        <h2 class="w3-text-grey w3-padding-16" style="text-align: center; direction: rtl"><i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i> أخبار وزارة الصحة المصرية </h2>
+        {% endblock head %}
+        {% for item in query %}
+        {% block advice %}
+        <div class="w3-container w3-center">
+          <h6 class="w3-text-teal" style="direction: rtl"><i class="fa fa-calendar fa-fw w3-margin-right"></i>{{ item.puplish }} {% if d == obj.puplish %}<span class="w3-tag w3-teal w3-round">Current</span>{% endif %}</h6>
+          <h5 style="direction: rtl">{{ item.content }}</h5>
+            {% if item.image %}
+            <img src="{{item.image.url}}" class="img-responsive" width="100%" height="60%">
+            {% endif %}
+          <hr>
+        </div>
+        {% endblock advice %}
+        {% endfor %}
+      <div class="pagination" style="text-align: center; direction: rtl">
+		    <span class="step-links">
+		        {% if query.has_previous %}
+		            <a href="?{{page_var}}={{ query.previous_page_number }}" style="color: blue"> السابق </a>
+		        {% endif %}
+		        <span class="current">
+		            صفحة {{ query.number }} من {{ query.paginator.num_pages }}
+		        </span>
+		        {% if query.has_next %}
+		            <a href="?{{page_var}}={{ query.next_page_number }}" style="color: blue"> التالي </a>
+		        {% endif %}
+		    </span>
+		</div>
+      </div>
+    </div><br>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-24 w3-light-grey w3-center w3-opacity w3-xlarge">
+    <h5>Find us on Social Media</h5>
+    <a href="https://www.facebook.com/egypt.mohp/" target="_blank"><i class="fa fa-facebook-official w3-hover-opacity"></i></a>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+    <h5>Our Government Website</h5>
+    <a href="http://www.mohp.gov.eg/" target="_blank"><i class="fa fa-home w3-hover-opacity"></i></a>
+  <!-- End footer -->
+  </footer>
+
+<!-- END PAGE CONTENT -->
+</div>
+
+<script>
+// Open and close sidebar
+function openNav() {
+  document.getElementById("mySidebar").style.width = "60%";
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+</script>
+
+</body>
+</html>

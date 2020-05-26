@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+{% load mathfilters %}
+{% load humanize %}
+<html>
+<title>Covid-19 Tracker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+<body class="w3-black">
+
+<!-- Side Navigation -->
+<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center w3-black" style="display:none" id="mySidebar">
+    <button class="w3-button w3-right w3-padding" onclick="w3_close()"><i class="fa fa-remove"></i></button>
+    <h1 class="w3-xxlarge w3-padding" style="text-align: center">Covid-19 فايروس كورونا </h1><hr>
+  <a href="{% url 'egy' %}" class="w3-bar-item w3-button w3-red" style="font-size: x-large">Egyptian Ministry of Health News <br> أخبار وزارة الصحة المصرية </a>
+  <a href="{% url 'advice' %}" class="w3-bar-item w3-button w3-white" style="font-size: x-large">Egyptian Ministry of Health advices <br> نصائح وزارة الصحة المصرية </a>
+    <a href="{% url 'question' %}" class="w3-bar-item w3-button w3-white" style="font-size: x-large">Common Questions <br> أسئلة شائعة </a>
+  <a href="{% url 'contact' %}" class="w3-bar-item w3-button w3-black" style="font-size: x-large">Egyptian Ministry of Health Contact <br> للتواصل مع وزارة الصحة المصرية </a>
+</nav>
+
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding w3-black" id="myHeader">
+  <div class="w3-center w3-black" style="height: 500px">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme" title="press here for Egyptian Ministry of Health"></i>
+    <iframe src="https://www.trackcorona.live/map" style="height:100%;width:100%; float: left; border: none"></iframe>
+  </div>
+</header>
+
+
+<div class="w3-row-padding w3-center w3-margin-top w3-black">
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: gray" title="press on icon"><b>{{allcases|intcomma}}</b></h1><br>
+  <a onclick="document.getElementById('case').style.display='block'" href="#"><i class="fa fa-ambulance" style="font-size:120px;color:gray" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Confirmed</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: gray" title="press on icon"><b>{{allactive|intcomma}}</b></h1><br>
+    <a onclick="document.getElementById('active').style.display='block'" href="#"><i class="fa fa-hospital-o" style="font-size:120px;color:gray" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Active</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: darkred" title="press on icon"><b>{{ alldeaths|intcomma }}</b></h1><br>
+  <a onclick="document.getElementById('death').style.display='block'" href="#"><i class="fa fa-heartbeat" style="font-size:120px;color:darkred" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Dead</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: darkgreen" title="press on icon"><b>{{allrecoveries|intcomma}}</b></h1><br>
+    <a onclick="document.getElementById('recover').style.display='block'" href="#"><i class="fa fa-heart" style="font-size:120px;color:darkgreen" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Recoverd</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: darkred" title="press on icon"><b>{{ alldeaths|div:allcases|mul:100|floatformat:"2" }}%</b></h1><br>
+  <a onclick="document.getElementById('drate').style.display='block'" href="#"><i class="fas fa-head-side-virus" style="font-size:120px;color:darkred" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Death rate</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: darkgreen" title="press on icon"><b>{{ allrecoveries|div:allcases|mul:100|floatformat:"2" }}%</b></h1><br>
+    <a onclick="document.getElementById('crate').style.display='block'" href="#"><i class="fa fa-medkit" style="font-size:120px;color:darkgreen" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Cure rate</h3>
+  </div>
+</div>
+
+</div>
+
+<div class="w3-row-padding w3-center w3-margin-top w3-black">
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: gray" title="press on icon"><b>{{allaffectedCountries}}</b></h1><br>
+  <a onclick="document.getElementById('coun').style.display='block'" href="#"><i class="fa fa-globe" style="font-size:120px;color:gray" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">Affected Countries</h3>
+  </div>
+</div>
+
+<div class="w3-third">
+  <div class="w3-card w3-container" style="min-height:350px">
+  <h1 style="color: gray" title="press on icon"><b><i class="fa fa-angle-double-down"></i></b></h1><br>
+    <a onclick="document.getElementById('about').style.display='block'" href="#"><i class="fa fa-info-circle" style="font-size:120px;color:gray" title="press here for more details"></i></a>
+  <h3 style="color: lightblue" title="press on icon">World History</h3>
+  </div>
+</div>
+</div>
+
+<div id="about" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('about').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+                  <h1 style="color: red"><b><span style="color: teal">World</span> history with Covid19</b></h1><br>
+                  <div class="w3-third" style="text-align: center; width: 24%; margin: 1px">
+                    <h6 style="color: wheat">Date</h6>
+                    {% for key, value in res1.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkslategrey; padding: 5px; font-size: medium; color: black; float: left; text-align: center">{{ key }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 26%; margin: 1px">
+                    <h6 style="color: blue;">Cases</h6>
+                    {% for key1, value1 in res1.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkslategrey; padding: 5px; font-size: medium; color: white; float: left; text-align: center">{{ value1 }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 24%; margin: 1px">
+                    <h6 style="color: red">Deaths</h6>
+                    {% for key2, value2 in res2.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkslategrey; padding: 5px; font-size: medium; color: white; float: left; text-align: center"> {{ value2 }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 23%; margin: 1px">
+                    <h6 style="color: green">Recovery</h6>
+                    {% for key3, value3 in res3.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkslategrey; padding: 5px; font-size: medium; color: white; float: left; text-align: center">{{ value3 }}</p>
+                    {% endfor %}
+                  </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="case" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('case').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Cases</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in casesarr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i in casesarr2 %}
+                        <p class="w3-light-grey w3-hover-red">{{i}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="active" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('active').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Active</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in activearr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i in activearr2 %}
+                        <p class="w3-light-grey w3-hover-red">{{i}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="death" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('death').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Deaths</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in deathsarr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i in deathsarr2 %}
+                        <p class="w3-light-grey w3-hover-red">{{i}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="recover" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('recover').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Recvered</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in recovarr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i in recovarr2 %}
+                        <p class="w3-light-grey w3-hover-red">{{i}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="drate" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('drate').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Dath Rate</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in deathsarr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i, ii in drate %}
+                        <p class="w3-light-grey w3-hover-red">{{ii|div:i|mul:100|floatformat:"2"}}%</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="crate" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('crate').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Countries Recvered Rate</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in recovarr1 %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i, ii in crate %}
+                        <p class="w3-light-grey w3-hover-red">{{ii|div:i|mul:100|floatformat:"2"}}%</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="coun" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <div class="w3-container w3-red w3-grayscale w3-display-container">
+      <span onclick="document.getElementById('coun').style.display='none'" class="w3-button w3-display-topright w3-xlarge">X</span>
+        <!-- About Container -->
+        <div class="w3-container w3-padding-64 w3-black w3-xlarge" id="about" style="margin-top: 64px">
+          <div class="w3-content">
+            <div class="w3-center">
+              <h2 class="w3-red w3-hover-green">World Affected Countries</h2>
+            </div>
+            <div class="w3-card w3-container" style="padding: 20px; margin: 20px">
+            <div class="w3-container w3-center" style="width: 100%; float: left">
+                <div style="float: left; width: 50%; text-align: center; padding-left: 30px">
+                    {% for i in cnum %}
+                        <p class="w3-light-grey w3-hover-green">{{i}}</p>
+                    {% endfor %}
+                </div>
+                <div style="float: left; width: 50%; text-align: center; padding-right: 30px">
+                    {% for i in casesarr1 %}
+                        <p class="w3-light-grey w3-hover-red">{{i}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="w3-container w3-center w3-padding" id="menu">
+    <div class="w3-row w3-center w3-border w3-border-dark-grey">
+        <button class="w3-col w3-container m3 w3-red w3-padding" id="infoo">Country Info</button>
+        <button class="w3-col w3-container m3 w3-black w3-padding" id="historyy">Country History</button>
+        <button class="w3-col w3-container m3 w3-black w3-padding" id="newss">Egypt News</button>
+        <button class="w3-col w3-container m3 w3-black w3-padding" id="assuree">Reassurance test</button>
+    </div>
+    <div class="w3-container w3-padding-32 w3-white">
+        <div class="w3-container" style="text-align: center; display: block" id="one">
+          <form autocomplete="off" id="search" method="post" action="{% url 'country_info' %}#menu" style="text-align: center; margin-top: 10px">
+            {% csrf_token %}
+              <div>
+                <input id="myInput1" type="text" name="location" style="border-radius: 10px; width: 60%; height: 40px; text-align: center" value="{{ locate }}" placeholder="Country Info: Enter a Country name or Country iso2 or iso3" required>
+              </div><br>
+            <input type="submit" value=" Search " style="border-radius: 5px; background-color: black; color: white; margin-top: 10px">
+          </form><br><hr>
+            {% if locate %}
+            <div class="w3-third">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locatename}}{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Country {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😑">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locatecases|intcomma}}{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Confirmed {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😔">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locateactive|intcomma}}{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Active {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😊">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locaterecoveries|intcomma}}{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Recoveries {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😢">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locatedeaths|intcomma}}{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Dead {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="🙂">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locaterecoveries|div:locatecases|mul:100|floatformat:"2"}}%{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Recovery Rate {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{% if locate %}{{locatedeaths|div:locatecases|mul:100|floatformat:"2"}}%{% endif %}</b></h1><br>
+                  <h3 style="color: teal">{% if locate %} Death Rate {% endif %}</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locatetodaycases|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Today Cases</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locatetodaydeaths|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Today Deaths</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locatecritical|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Critical Cases</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locatecasesPerOneMillion|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Cases Per One Million</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locatedeathsPerOneMillion|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Deaths Per One Million</h3>
+              </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="w3-container" style="text-align: center; display: none" id="two">
+          <form autocomplete="off" id="search" method="post" action="{% url 'country_history' %}#menu" style="text-align: center; margin-top: 10px">
+            {% csrf_token %}
+              <div>
+                <input id="myInput2" type="text" name="locationn" style="border-radius: 10px; width: 60%; height: 40px; text-align: center" value="{{ locatee }}" placeholder="Country History: Enter a Country name or country iso2 or iso3">
+            </div><br>
+              <input type="submit" value=" Search " style="border-radius: 5px; background-color: black; color: white; margin-top: 10px">
+          </form><br><hr>
+            <div class="w3-card w3-container">
+            {% if locatee %}
+                  <h1 style="color: black"><b><span style="color: teal">{{ histname }}</span> history with Covid19</b></h1><br>
+                  <div class="w3-third" style="text-align: center; width: 21%; margin: 1px">
+                    <h6 style="color: black; padding: 1px">Date</h6>
+                    {% for key, value in r1.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkgrey; padding: 5px; font-size: medium; color: white; float: left; text-align: center">{{ key }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 27%; margin: 1px">
+                    <h6 style="color: darkblue; padding: 1px">Cases</h6>
+                    {% for key1, value1 in r1.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkgrey; padding: 5px; font-size: medium; color: blue; float: left; text-align: center">{{ value1 }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 23%; margin: 1px">
+                    <h6 style="color: darkred; padding: 1px">Deaths</h6>
+                    {% for key2, value2 in r2.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkgrey; padding: 5px; font-size: medium; color: red; float: left; text-align: center"> {{ value2 }} </p>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-third" style="text-align: center; width: 24%; margin: 1px">
+                    <h6 style="color: darkgreen; padding: 1px">Recovery</h6>
+                    {% for key3, value3 in r3.items %}
+                        <p style="width: 100%; border: 1px solid black; border-radius: 5px; background-color: darkgrey; padding: 5px; font-size: medium; color: green; float: left; text-align: center">{{ value3 }}</p>
+                    {% endfor %}
+                  </div>
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="w3-container" style="text-align: center; display: none" id="three">
+          <div class="w3-third" title="😑">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationcases|intcomma}}</b></h1><br>
+                  <h3 style="color: teal">Confirmed</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😔">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationactive|intcomma}}</b></h1><br>
+                  <h3 style="color: teal">Active</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😊">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationrecoveries|intcomma}}</b></h1><br>
+                  <h3 style="color: teal">Recoveries</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😢">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationdeaths|intcomma}}</b></h1><br>
+                  <h3 style="color: teal">Dead</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="🙂">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationrecoveries|div:locationcases|mul:100|floatformat:"2"}}%</b></h1><br>
+                  <h3 style="color: teal">Recovery Rate</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{locationdeaths|div:locationcases|mul:100|floatformat:"2"}}%</b></h1><br>
+                  <h3 style="color: teal">Death Rate</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locationtodaycases|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Today Cases</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locationtodaydeaths|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Today Deaths</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locationcritical|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Critical Cases</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locationcasesPerOneMillion|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Cases Per One Million</h3>
+              </div>
+            </div>
+            <div class="w3-third" title="😟">
+              <div class="w3-card w3-container">
+                  <h1 style="color: gray"><b>{{ locationdeathsPerOneMillion|intcomma }}</b></h1><br>
+                  <h3 style="color: teal">Deaths Per One Million</h3>
+              </div>
+            </div>
+        </div>
+        <div class="w3-container" style="text-align: left; display: none" id="four">
+        <div class="w3-half">
+            <form class="w3-container w3-card-4" method="post" action="{% url 'assurance' %}#menu">
+                {% csrf_token %}
+              <div class="w3-section">
+                  <label>Name</label>
+                <input class="w3-input" type="text" required name="name">
+              </div>
+              <div class="w3-section">
+                  <label>Age</label>
+                <input class="w3-input" type="number" required name="age">
+              </div>
+              <div class="w3-section">
+                <label>Gender</label>
+                  <select class="w3-input" name="gender">
+                      <option>Male</option>
+                      <option>Female</option>
+                  </select>
+              </div>
+                <div class="w3-section">
+                <label>Address</label>
+                  <select class="w3-input" name="address">
+                      <option>Cairo</option>
+                      <option>Dkahlia</option>
+                  </select>
+              </div>
+
+              <div class="w3-row">
+              <div class="w3-half">
+                <input id="milk" class="w3-check" type="checkbox" name="c1">
+                <label>Suffer from a high temperature of more than 38 degrees Celsius (2)</label>
+                <br>
+                <input id="sugar" class="w3-check" type="checkbox" name="c2">
+                <label>Suffer from a severe or increased cough (2)</label>
+                <br>
+                <input id="lemon" class="w3-check" type="checkbox" name="c3">
+                <label>Suffer from severe sore throat(1)</label>
+                <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c4">
+                <label>Suffer from vomiting or diarrhea(1)</label>
+                <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c5">
+                <label>Suffers from a chronic disease: sugar, pressure, heart, kidney, etc. (1)</label>
+                <br><br>
+              </div>
+
+              <div class="w3-half">
+                  <input id="lemon" class="w3-check" type="checkbox" name="c6">
+                <label>Travel inside(tourist place) or outside your country (5)</label>
+                  <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c7">
+                <label>Contact with an acute respiratory condition (4)</label>
+                <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c8">
+                <label>Contact with a condition that has the symptoms above (3)</label>
+                <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c9">
+                <label>Visiting a healthy place where there are cases before or after the visit (3)</label>
+                <br>
+                  <input id="lemon" class="w3-check" type="checkbox" name="c10">
+                <label>A worker in the health sector or sanitary insulationm (2)</label>
+                <br>
+              </div>
+              </div>
+                <input type="submit" value=" Check " style="border-radius: 5px; background-color: black; color: white; margin-top: 10px; margin-bottom: 10px; text-align: center; width: 100%">
+            </form>
+        </div>
+        <div class="w3-half" style="text-align: center">
+            <h1> {{ name }} Result</h1>
+            {% if level1 %}
+            <h3>First Level: {{ level1 }}</h3>
+            {% else %}
+            <h3>First Level: 0</h3>
+            {% endif %}
+            {% if level2 %}
+            <h3>Second Level: {{ level2 }}</h3>
+            {% else %}
+            <h3>Second Level: 0</h3>
+            {% endif %}
+            {% if level3 %}
+            <h3>Third Level: {{ level3 }}</h3>
+            {% else %}
+            <h3>Third Level: 0</h3><br><br><br>
+            {% endif %}
+
+            {% if level2 <= 1 %}
+                <div class="w3-row-padding">
+                    <div class="w3-center w3-margin">
+                    <div class="w3-card white">
+                      <div class="w3-container w3-green" style="text-align: center">
+                        <h3>Your Status</h3>
+                      </div>
+                      <div class="w3-container" style="text-align: center">
+                      <h3 class="w3-text-indigo">{{date}}</h3>
+                      </div>
+                      <ul class="w3-ul w3-border-top">
+                        <li>
+                          <h3>You may be suffering from a mild cold. <br> Be careful and follow the prevention instructions.</h3>
+                        </li>
+                      </ul>
+                      <div class="w3-container w3-green w3-large"><span class="w3-right">Possibility of an infection: 10%</span></div>
+                    </div>
+                    </div>
+                </div>
+
+            {% elif level2 == 2 and level3 <= 3 %}
+                <div class="w3-row-padding">
+                    <div class="w3-center w3-margin">
+                    <div class="w3-card white">
+                      <div class="w3-container w3-lime" style="text-align: center">
+                        <h3>Your Status</h3>
+                      </div>
+                      <div class="w3-container" style="text-align: center">
+                      <h3 class="w3-text-indigo">{{date}}</h3>
+                      </div>
+                      <ul class="w3-ul w3-border-top">
+                        <li>
+                          <h3>Your condition is good. <br> you may be suffering from a common cold . <br> Be careful and follow the prevention instructions . <br> It is best to stick to the house self-isolation.</h3>
+                        </li>
+                      </ul>
+                      <div class="w3-container w3-lime w3-large"><span class="w3-right">Possibility of an infection: 30%</span></div>
+                    </div>
+                    </div>
+                </div>
+
+            {% elif level2 == 3 and level3 <= 5 and level3 > 3 and level1 <= 3 %}
+                <div class="w3-row-padding">
+                    <div class="w3-center w3-margin">
+                    <div class="w3-card white">
+                      <div class="w3-container w3-pink" style="text-align: center">
+                        <h3>Your Status</h3>
+                      </div>
+                      <div class="w3-container" style="text-align: center">
+                      <h3 class="w3-text-indigo">{{date}}</h3>
+                      </div>
+                      <ul class="w3-ul w3-border-top">
+                        <li>
+                          <h3>Your condition is not fairly good. <br> You may be suffering from a strong cold. <br> Stay careful and follow the prevention instructions. <br> It is best to stick to the house self-isolation. <br> It is best to consult a doctor by phone.</h3>
+                        </li>
+                      </ul>
+                      <div class="w3-container w3-pink w3-large"><span class="w3-right">Possibility of an infection: 50%</span></div>
+                    </div>
+                    </div>
+                </div>
+
+            {% elif level2 > 3 and level3 > 5 and level1 >= 4 %}
+                <div class="w3-row-padding">
+                    <div class="w3-center w3-margin">
+                    <div class="w3-card white">
+                      <div class="w3-container w3-red" style="text-align: center">
+                        <h3>Your Status</h3>
+                      </div>
+                      <div class="w3-container" style="text-align: center">
+                      <h3 class="w3-text-indigo">{{date}}</h3>
+                      </div>
+                      <ul class="w3-ul w3-border-top">
+                        <li>
+                          <h3>Your condition is not at all good. <br> It might be easy. <br> But please contact the relevant authorities to follow up your case. <br> The emergency number is 105. <br> You may be infected and need sanitary isolation and treatment. <br> please hurry up.</h3>
+                        </li>
+                      </ul>
+                      <div class="w3-container w3-red w3-large"><span class="w3-right">Possibility of an infection: 70%</span></div>
+                    </div>
+                    </div>
+                </div>
+            {% else %}
+                {% if name %}
+                <div class="w3-row-padding">
+                    <div class="w3-center w3-margin">
+                    <div class="w3-card white">
+                      <div class="w3-container w3-teal" style="text-align: center">
+                        <h3>Your Status</h3>
+                      </div>
+                      <div class="w3-container" style="text-align: center">
+                      <h3 class="w3-text-indigo">{{date}}</h3>
+                      </div>
+                      <ul class="w3-ul w3-border-top">
+                        <li>
+                          <h3>Your condition is good. <br> you may be suffering from a common cold . <br> Be careful and follow the prevention instructions . <br> It is best to stick to the house self-isolation.</h3>
+                        </li>
+                      </ul>
+                      <div class="w3-container w3-teal w3-large"><span class="w3-right">Possibility of an infection: 20%</span></div>
+                    </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        </div>
+    </div><br>
+</div>
+<footer class="w3-container w3-theme-dark w3-padding-16" style="border-radius: 10px; border: 1px solid darkslategrey">
+    <div class="w3-half" style="text-align: center">
+        <h3>About</h3>
+        <p>A Covid-19 Corona Tracker [1st version].</p>
+        <p>The data is updated every hour at most.</p>
+        <p>External sources: Herokuapp-coronavirus-19-api and trackcorona-live-map</p>
+    </div>
+    <div class="w3-half" style="text-align: center">
+        <h3>Contact</h3>
+        <p>to contact with Developer:</p>
+        <p><i class="fas fa-envelope"></i> ameensadek99@gmail.com </p>
+        <p>or <a href="https://www.linkedin.com/in/ameen-sadek-892198148/" style="text-decoration: none"><i class="fab fa-linkedin" style="font-size: xx-large"></i></a></p>
+    </div>
+</footer>
+
+
+
+<script>
+// Side navigation
+function w3_open() {
+  var x = document.getElementById("mySidebar");
+  x.style.width = "100%";
+  x.style.fontSize = "40px";
+  x.style.paddingTop = "10%";
+  x.style.display = "block";
+}
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+
+info = document.getElementById('infoo');
+histor = document.getElementById('historyy');
+news = document.getElementById('newss');
+assure = document.getElementById('assuree');
+
+info.onclick = function () {
+    info.className = "w3-col w3-container m3 w3-red w3-padding";
+    histor.className = "w3-col w3-container m3 w3-black w3-padding";
+    news.className = "w3-col w3-container m3 w3-black w3-padding";
+    assure.className = "w3-col w3-container m3 w3-black w3-padding";
+    document.getElementById("one").style.display = "block";
+    document.getElementById("two").style.display = "none";
+    document.getElementById("three").style.display = "none";
+    document.getElementById("four").style.display = "none";
+};
+histor.onclick = function () {
+    info.className = "w3-col w3-container m3 w3-black w3-padding";
+    histor.className = "w3-col w3-container m3 w3-red w3-padding";
+    news.className = "w3-col w3-container m3 w3-black w3-padding";
+    assure.className = "w3-col w3-container m3 w3-black w3-padding";
+    document.getElementById("one").style.display = "none";
+    document.getElementById("two").style.display = "block";
+    document.getElementById("three").style.display = "none";
+    document.getElementById("four").style.display = "none";
+};
+news.onclick = function () {
+    info.className = "w3-col w3-container m3 w3-black w3-padding";
+    histor.className = "w3-col w3-container m3 w3-black w3-padding";
+    news.className = "w3-col w3-container m3 w3-red w3-padding";
+    assure.className = "w3-col w3-container m3 w3-black w3-padding";
+    document.getElementById("one").style.display = "none";
+    document.getElementById("two").style.display = "none";
+    document.getElementById("three").style.display = "block";
+    document.getElementById("four").style.display = "none";
+};
+assure.onclick = function () {
+    info.className = "w3-col w3-container m3 w3-black w3-padding";
+    histor.className = "w3-col w3-container m3 w3-black w3-padding";
+    news.className = "w3-col w3-container m3 w3-black w3-padding";
+    assure.className = "w3-col w3-container m3 w3-red w3-padding";
+    document.getElementById("one").style.display = "none";
+    document.getElementById("two").style.display = "none";
+    document.getElementById("three").style.display = "none";
+    document.getElementById("four").style.display = "block";
+};
+</script>
+<script>
+function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
+
+/*An array containing all the country names in the world:*/
+{#var countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Central Arfrican Republic","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cuba","Curacao","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Myanmar","Namibia","Nauro","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","North Korea","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States of America","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];#}
+{#var countries = {{ allcountries }};#}
+var countries1 = ['USA', 'Spain', 'Italy', 'Germany', 'France', 'Iran', 'UK', 'Turkey', 'Switzerland', 'Belgium', 'Netherlands', 'Canada', 'Austria', 'Portugal', 'Brazil', 'S. Korea', 'Israel', 'Sweden', 'Australia', 'Norway', 'Russia', 'Ireland', 'Czechia', 'Chile', 'Denmark', 'Poland', 'Romania', 'Malaysia', 'India', 'Ecuador', 'Philippines', 'Japan', 'Pakistan', 'Luxembourg', 'Saudi Arabia', 'Indonesia', 'Thailand', 'Finland', 'Serbia', 'Mexico', 'Panama', 'Peru', 'Dominican Republic', 'Greece', 'South Africa', 'UAE', 'Iceland', 'Argentina', 'Colombia', 'Qatar', 'Algeria', 'Singapore', 'Ukraine', 'Croatia', 'Estonia', 'Egypt', 'New Zealand', 'Slovenia', 'Morocco', 'Iraq', 'Hong Kong', 'Moldova, Republic of', 'Armenia', 'Lithuania', 'Hungary', 'Diamond Princess', 'Bahrain', 'Bosnia', 'Azerbaijan', 'Kazakhstan', 'Belarus', 'Kuwait', 'Macedonia', 'Cameroon', 'Tunisia', 'Latvia', 'Bulgaria', 'Lebanon', 'Andorra', 'Slovakia', 'Cyprus', 'Costa Rica', 'Uruguay', 'Taiwan', 'Albania', 'Réunion', 'Afghanistan', 'Jordan', 'Cuba', 'Burkina Faso', 'Oman', 'Uzbekistan', 'Honduras', 'San Marino', 'Channel Islands', "Côte d'Ivoire", 'Vietnam', 'Palestinian Territory, Occupied', 'Mauritius', 'Malta', 'Nigeria', 'Senegal', 'Ghana', 'Montenegro', 'Faroe Islands', 'Sri Lanka', 'Georgia', 'Bolivia', 'Venezuela', 'DRC', 'Kyrgyzstan', 'Martinique', 'Niger', 'Kenya', 'Brunei', 'Guadeloupe', 'Mayotte', 'Isle of Man', 'Guinea', 'Cambodia', 'Trinidad and Tobago', 'Paraguay', 'Gibraltar', 'Rwanda', 'Bangladesh', 'Liechtenstein', 'Madagascar', 'Monaco', 'Aruba', 'El Salvador', 'Guatemala', 'French Guiana', 'Djibouti', 'Barbados', 'Jamaica', 'Uganda', 'Congo', 'Mali', 'Togo', 'Macao', 'Ethiopia', 'French Polynesia', 'Zambia', 'Bermuda', 'Cayman Islands', 'Saint Martin', 'Eritrea', 'Bahamas', 'Sint Maarten', 'Guyana', 'Gabon', 'Myanmar', 'Haiti', 'Tanzania, United Republic of', 'Syrian Arab Republic', 'Maldives', 'Libyan Arab Jamahiriya', 'Guinea-Bissau', 'New Caledonia', 'Benin', 'Equatorial Guinea', 'Namibia', 'Antigua and Barbuda', 'Dominica', 'Mongolia', 'Saint Lucia', 'Liberia', 'Sudan', 'Fiji', 'Grenada', 'Curaçao', 'Greenland', "Lao People's Democratic Republic", 'Angola', 'Suriname', 'Mozambique', 'Saint Kitts and Nevis', 'Seychelles', 'MS Zaandam', 'Zimbabwe', 'Nepal', 'Chad', 'Swaziland', 'Central African Republic', 'Cabo Verde', 'Holy See (Vatican City State)', 'Saint Vincent and the Grenadines', 'Somalia', 'Mauritania', 'Montserrat', 'St. Barth', 'Sierra Leone', 'Nicaragua', 'Turks and Caicos Islands', 'Belize', 'Bhutan', 'Botswana', 'Gambia', 'Malawi', 'Western Sahara', 'Anguilla', 'British Virgin Islands', 'Burundi', 'Caribbean Netherlands', 'Falkland Islands (Malvinas)', 'Papua New Guinea', 'Saint Pierre Miquelon', 'South Sudan', 'Timor-Leste', 'China']
+var countries2 = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Australia', 'Australia', 'Australia', 'Australia', 'Australia', 'Australia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'China', 'Colombia', 'Congo', 'DRC', 'Costa Rica', "Côte d'Ivoire", 'Croatia', 'Diamond Princess', 'Cuba', 'Cyprus', 'Czechia', 'Denmark', 'Denmark', 'Denmark', 'Djibouti', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Swaziland', 'Ethiopia', 'Fiji', 'Finland', 'France', 'France', 'France', 'France', 'France', 'France', 'France', 'France', 'France', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Guatemala', 'Guinea', 'Guyana', 'Haiti', 'Holy See', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'S. Korea', 'Kuwait', 'Kyrgyzstan', 'Latvia', 'Lebanon', 'Liberia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malaysia', 'Maldives', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova, Republic of', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands', 'Netherlands', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Macedonia', 'Norway', 'Oman', 'Pakistan', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'San Marino', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Singapore', 'Slovakia', 'Slovenia', 'Somalia', 'South Africa', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Taiwan', 'Tanzania, United Republic of', 'Thailand', 'Togo', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Uganda', 'Ukraine', 'UAE', 'UK', 'UK', 'UK', 'UK', 'UK', 'UK', 'UK', 'Uruguay', 'USA', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Zambia', 'Zimbabwe', 'Canada', 'Dominica', 'Grenada', 'Mozambique', 'Syrian Arab Republic', 'Timor-Leste', 'Belize', 'Canada', "Lao People's Democratic Republic", 'Libyan Arab Jamahiriya', 'West Bank and Gaza', 'Guinea-Bissau', 'Mali', 'Saint Kitts and Nevis', 'Canada', 'Canada', 'Kosovo', 'Burma', 'UK', 'UK', 'UK', 'MS Zaandam', 'Botswana', 'Burundi', 'Sierra Leone', 'Netherlands', 'Malawi', 'UK']
+
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete(document.getElementById("myInput1"), countries1);
+autocomplete(document.getElementById("myInput2"), countries2);
+</script>
+</body>
+</html>
